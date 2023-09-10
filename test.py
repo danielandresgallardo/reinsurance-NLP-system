@@ -19,7 +19,8 @@ job_elements = results.find_all("div", class_="subSleeve")
 for job_element in job_elements:
     title_element = job_element.find("a")
     intro_element = job_element.find("p", class_="intro")
+    url_element = title_element['href']
     print("Title: ",title_element.text.strip())
     print("Intro: ",intro_element.text.strip())
+    print("URL :",url_element)
     print()
-
