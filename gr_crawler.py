@@ -1,8 +1,6 @@
 import fetch_and_parse_html
 
 def retrieve_data_from_article(url_element, last_date):
-
-    #print("URL: ", url_element)
     
     soup = fetch_and_parse_html.run(url_element)
 
@@ -19,17 +17,14 @@ def retrieve_data_from_article(url_element, last_date):
         return 1
     
     article_title = soup.find("div", class_="story_title").text
-    print("Title: ", article_title.strip("\n"))
 
     article_intro = soup.find("div", class_="standfirst").text
-    #print("Intro: ", article_intro)
 
     article_content = soup.find("div", class_="storytext")
     article_content_elements = article_content.find_all("p")
-    #print("Content: ")
+    article_content = ""
     #for article_content_element in article_content_elements:
         #print(article_content_element.text)
-    #print()
     return 0
 
 def update_news(last_date):
