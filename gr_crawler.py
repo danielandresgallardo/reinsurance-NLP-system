@@ -1,17 +1,9 @@
-import requests
-import user_agents
-from bs4 import BeautifulSoup
+import fetch_and_parse_html
 
 URL = 'https://www.globalreinsurance.com/sections/news'
 
-try:
-    page = requests.get(URL, headers={'User-Agent': user_agents.random_agent()})
-    page.raise_for_status()
-except requests.exceptions.RequestException as e:
-    print("Error fetching the main page:", e)
-    exit(1)
+soup = fetch_and_parse_html.run(URL)
 
-soup = BeautifulSoup(page.content, "html.parser")
 results = soup.find(id="news_5792")
 
 more_news_URL = results.find("p", class_="more").find('a')['href']
@@ -26,15 +18,10 @@ for news_element in news_elements:
     print("Intro: ", intro_element.text.strip())
     print("URL: ", url_element)
 
-    try:
-        article_URL = requests.get(url_element, headers={'User-Agent': user_agents.random_agent()})
-        article_URL.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        print("Error fetching the article page:", e)
-        continue
+    soup = fetch_and_parse_html.run(url_element)
 
-    soup = BeautifulSoup(article_URL.content, "html.parser")
     results = soup.find(id="wrapper_sleeve")
+
     article_date = results.find("p", class_="byline meta").text
     print("Date: ", article_date.strip("\n"))
     article_content = results.find("div", class_="storytext")
@@ -45,7 +32,8 @@ for news_element in news_elements:
     print()
 
 print(more_news_URL)
-page = requests.get(more_news_URL, headers={'User-Agent': user_agents.random_agent()})
 
-news_elements = results.find_all("div", class_="listBlocks")
+soup = fetch_and_parse_html.run(more_news_URL)
+
+news_elements = soup.find_all("div", class_="listBlocks")
 print(news_elements)
