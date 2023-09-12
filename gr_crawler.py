@@ -1,21 +1,11 @@
 import requests
-import random
+import user_agents
 from bs4 import BeautifulSoup
-
-user_agents_list = [
-    'Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36',
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/99.0.999.0',
-    'Mozilla/5.0 (Linux; Android 10; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Mobile Safari/537.36',
-    'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1',
-    # Add more User-Agent strings here
-]
 
 URL = 'https://www.globalreinsurance.com/sections/news'
 
 try:
-    page = requests.get(URL, headers={'User-Agent': random.choice(user_agents_list)})
+    page = requests.get(URL, headers={'User-Agent': user_agents.random_agent()})
     page.raise_for_status()
 except requests.exceptions.RequestException as e:
     print("Error fetching the main page:", e)
@@ -37,7 +27,7 @@ for news_element in news_elements:
     print("URL: ", url_element)
 
     try:
-        article_URL = requests.get(url_element, headers={'User-Agent': random.choice(user_agents_list)})
+        article_URL = requests.get(url_element, headers={'User-Agent': user_agents.random_agent()})
         article_URL.raise_for_status()
     except requests.exceptions.RequestException as e:
         print("Error fetching the article page:", e)
@@ -55,7 +45,7 @@ for news_element in news_elements:
     print()
 
 print(more_news_URL)
-page = requests.get(more_news_URL, headers={'User-Agent': random.choice(user_agents_list)})
+page = requests.get(more_news_URL, headers={'User-Agent': user_agents.random_agent()})
 
 news_elements = results.find_all("div", class_="listBlocks")
 print(news_elements)
