@@ -2,10 +2,10 @@ import fetch_and_parse_html
 import db_connector
 from datetime import datetime
 from googletrans import Translator
+import concurrent.futures
 
 
 def retrieve_data_from_article(url_element, last_date):
-    connection = None
     try:
         soup = fetch_and_parse_html.run(url_element)
 
@@ -64,11 +64,20 @@ def update_news(last_date):
             URL = soup.find("a", class_="next")['href']
 
             news_elements = soup.find_all("div", class_="storyDetails")
+            # Create a ThreadPoolExecutor
+            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+                # Create a list of futures by submitting tasks
+                futures = []
+                
+                for news_element in news_elements:
+                    url_element = news_element.find("h3").find("a")['href']
+                    future = executor.submit(retrieve_data_from_article, url_element, last_date)
+                    futures.append(future)
+                
+                for future in concurrent.futures.as_completed(futures):
+                    if future.result() == 1:
+                        up_to_date = True
+                        break
 
-            for news_element in news_elements:
-                url_element = news_element.find("h3").find("a")['href']
-                if retrieve_data_from_article(url_element, last_date) == 1:
-                    up_to_date = True
-                    break
         except Exception as e:
             print(f"Error updating news: {str(e)}")
