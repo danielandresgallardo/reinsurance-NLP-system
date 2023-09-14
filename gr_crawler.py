@@ -43,7 +43,9 @@ def retrieve_data_from_article(url_element, last_date):
 
         translated_content = translator.translate(article_content, dest='zh-tw').text
 
-        db_connector.add_translation(translated_title, translated_content)
+        article_id = db_connector.get_id(url_element)
+
+        db_connector.add_translation(article_id, translated_title, translated_content)
 
 
         return 0
