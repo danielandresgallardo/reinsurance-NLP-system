@@ -67,26 +67,42 @@ def add_article(title, author, source, date, content, url):
     if connection:
       connection.close()
 
-
-def add_translation(title, content):
+def get_id(url):
   try:
     connection = get_connection()
     mycursor = connection.cursor(buffered=True)
 
-    sql = "SELECT id FROM news_articles WHERE title = %s"
-    val = (title,)
+    sql = "SELECT id FROM news_articles WHERE url = %s"
+    val = (url,)
     mycursor.execute(sql, val)
 
     article_id = mycursor.fetchone()
+    return article_id
+  except mysql.connector.Error as e:
+    print(f"Error getting id: {str(e)}")
+    raise
+  finally:
+    if connection:
+      connection.close()
 
-    sql = "INSERT INTO translated_articles (article_id, title, content) VALUES (%s, %s, %s)"
-    val = (article_id, title, content)
+def add_translation(id, title, content):
+  try:
+    connection = get_connection()
+    mycursor = connection.cursor(buffered=True)
 
-    mycursor.execute(sql, val)
+    if id is not None:
+      # Corrected the val tuple to include the article_id
+      sql = "INSERT INTO translated_articles (article_id, title, content) VALUES (%s, %s, %s)"
+      val = (id[0], title, content)  # Use article_id[0] to get the ID value
 
-    connection.commit()
+      mycursor.execute(sql, val)
 
-    print(mycursor.rowcount, "translated article inserted.")
+      connection.commit()
+
+      print(mycursor.rowcount, "translated article inserted.")
+    else:
+      print("No matching article found for translation.")
+
   except mysql.connector.Error as e:
     print(f"Error adding translation: {str(e)}")
     raise
@@ -120,7 +136,7 @@ def delete_all_data():
       connection = get_connection()
       mycursor = connection.cursor(buffered=True)
       
-      tables_to_delete = ["news_articles", "translated_articles", "sentiment_analysis"]
+      tables_to_delete = ["translated_articles", "sentiment_analysis", "news_articles"]
 
       for table in tables_to_delete:
         delete_sql = f"DELETE FROM {table}"
