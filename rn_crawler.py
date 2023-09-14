@@ -2,21 +2,8 @@ import fetch_and_parse_html
 import db_connector
 from datetime import datetime
 from googletrans import Translator
+import concurrent.futures
 
-month_to_digits = {
-    "January" : "01",
-    "February" : "02",
-    "March" : "03",
-    "April" : "04",
-    "May" : "05",
-    "June" : "06",
-    "July" : "07",
-    "August" : "08",
-    "September" : "09",
-    "October" : "10",
-    "November" : "11",
-    "December" : "12"
-}
 
 def retrieve_data_from_article(url_element, last_date):
     try:
@@ -26,7 +13,6 @@ def retrieve_data_from_article(url_element, last_date):
         article_date = soup.find("p", class_="date").text
 
         #Convert to datetime
-        # Convert to datetime
         article_date = article_date.strip()  # Remove leading/trailing spaces
         date_parts = article_date.split()
         day = date_parts[0].rstrip('thstndrd')  # Remove "th", "st", "nd", "rd" from the day
@@ -36,19 +22,17 @@ def retrieve_data_from_article(url_element, last_date):
 
         # Parse the date string
         article_date = datetime.strptime(formatted_date, '%d %B %YT%H:%M:%S%z')
-
-        print(article_date)
-
+        
+        #If article is older than data on database
+        if article_date < last_date:
+            return 1
+        
         #Fetch author
         
         article_author = date_parts[5]+" "+date_parts[6]
 
-        #If article is older than data on database
-        if article_date == last_date:
-            return 1
-        
         #Convert to string format (%Y-%m-%dT%H:%M:%S%z)
-        #article_date = article_date.strftime("%Y-%m-%dT%H:%M:%S%z")
+        article_date = article_date.strftime("%Y-%m-%dT%H:%M:%S%z")
 
         #Fetch title from website
         article_title = soup.find("div", id="articles-section").find('h1').text
@@ -69,7 +53,9 @@ def retrieve_data_from_article(url_element, last_date):
 
         translated_content = translator.translate(article_content, dest='zh-tw').text
 
-        db_connector.add_translation(translated_title, translated_content)
+        article_id = db_connector.get_id(url_element)
+
+        db_connector.add_translation(article_id, translated_title, translated_content)
 
         return 0
     except Exception as e:
@@ -90,11 +76,19 @@ def update_news(last_date):
             URL = soup.find("a", class_="next page-numbers")['href']
 
             news_elements = soup.find_all("div", class_="col-9 pl-0")
+            # Create a ThreadPoolExecutor
+            with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+                # Create a list of futures by submitting tasks
+                futures = []
 
-            for news_element in news_elements:
-                url_element = news_element.find("h3").find("a")['href']
-                if retrieve_data_from_article(url_element, last_date) == 1:
-                    up_to_date = True
-                    break
+                for news_element in news_elements:
+                    url_element = news_element.find("h3").find("a")['href']
+                    future = executor.submit(retrieve_data_from_article, url_element, last_date)
+                    futures.append(future)
+
+                for future in concurrent.futures.as_completed(futures):
+                    if future.result() == 1:
+                        up_to_date = True
+                        break
         except Exception as e:
             print(f"Error updating news: {str(e)}")
