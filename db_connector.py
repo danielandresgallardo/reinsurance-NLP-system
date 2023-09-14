@@ -70,13 +70,20 @@ def delete_old_articles(oldest_date):
   print(mycursor.rowcount, "record(s) deleted")
 
 def delete_all_data():
-  
-  mycursor = mydb.cursor(buffered=True)
+    mycursor = mydb.cursor(buffered=True)
+    
+    tables_to_delete = ["news_articles", "translated_articles", "sentiment_analysis"]
 
-  sql = "DELETE FROM news_articles"
+    try:
+        for table in tables_to_delete:
+            delete_sql = f"DELETE FROM {table}"
+            mycursor.execute(delete_sql)
+    
+        mydb.commit()
 
-  mycursor.execute(sql)
-
-  mydb.commit()
-
-  print(mycursor.rowcount, "record(s) deleted")
+        print(mycursor.rowcount, "record(s) deleted")
+    except Exception as e:
+        mydb.rollback()  # Rollback changes in case of an error
+        print(f"Error deleting data: {str(e)}")
+    finally:
+        mycursor.close()  # Close the cursor
