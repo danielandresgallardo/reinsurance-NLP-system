@@ -8,29 +8,57 @@ mydb = mysql.connector.connect(
 )
 
 def fetch_last_date():
-  mycursor = mydb.cursor()
-
+  mycursor = mydb.cursor(buffered=True)
   sql = "SELECT date FROM news_articles ORDER BY date DESC"
-
   mycursor.execute(sql)
 
   lastDate = mycursor.fetchone()
-  return lastDate
+  
+  if lastDate == None:
+    return None
+  else:
+    return lastDate[0]
 
-def add_article(title, source, date, content, url):
-  mycursor = mydb.cursor()
 
-  sql = "INSERT INTO news_articles (title, source, date, content, url) VALUES (%s, %s, %s, %s, %s)"
-  val = (title, source, date, content, url)
+
+def add_article(title, author, source, date, content, url):
+  mycursor = mydb.cursor(buffered=True)
+  if author == 0:
+    sql = "INSERT INTO news_articles (title, source, date, content, url) VALUES (%s, %s, %s, %s, %s)"
+    val = (title, source, date, content, url)
+  else:
+    sql = "INSERT INTO news_articles (title, author, source, date, content, url) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (title, author, source, date, content, url)
+
   mycursor.execute(sql, val)
 
   mydb.commit()
 
   print(mycursor.rowcount, "article inserted.")
 
+def add_translation(title, content):
+  mycursor = mydb.cursor(buffered=True)
+
+  sql = "SELECT id FROM news_articles WHERE title = %s"
+  val = (title,)
+  mycursor.execute(sql, val)
+
+  article_id = mycursor.fetchone()
+
+  sql = "INSERT INTO translated_articles (article_id, title, content) VALUES (%s, %s, %s)"
+  val = (article_id, title, content)
+
+  mycursor.execute(sql, val)
+
+  mydb.commit()
+
+  print(mycursor.rowcount, "translated article inserted.")
+
+
+
 def delete_old_articles(oldest_date):
 
-  mycursor = mydb.cursor()
+  mycursor = mydb.cursor(buffered=True)
 
   sql = "DELETE FROM news_articles WHERE date < (%s)"
   val = (oldest_date,)
@@ -41,5 +69,14 @@ def delete_old_articles(oldest_date):
 
   print(mycursor.rowcount, "record(s) deleted")
 
-#add_article("title test", "Test source", 20230911000000, "test content", "test url")
-#print(fetch_last_date())
+def delete_all_data():
+  
+  mycursor = mydb.cursor(buffered=True)
+
+  sql = "DELETE FROM news_articles"
+
+  mycursor.execute(sql)
+
+  mydb.commit()
+
+  print(mycursor.rowcount, "record(s) deleted")
