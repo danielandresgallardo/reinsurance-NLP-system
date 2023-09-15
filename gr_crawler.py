@@ -1,8 +1,8 @@
 import fetch_and_parse_html
 import db_connector
 from datetime import datetime
-from googletrans import Translator
 import concurrent.futures
+import translate_article
 
 
 def retrieve_data_from_article(url_element, last_date):
@@ -36,16 +36,9 @@ def retrieve_data_from_article(url_element, last_date):
         
         db_connector.add_article(article_title, 0, "Glabal Reinsurance", article_date, article_content, url_element)
 
-
-        translator = Translator()
-
-        translated_title = translator.translate(article_title, dest='zh-tw').text
-
-        translated_content = translator.translate(article_content, dest='zh-tw').text
-
         article_id = db_connector.get_id(url_element)
 
-        db_connector.add_translation(article_id, translated_title, translated_content)
+        translate_article.translate_and_upload(article_id, article_title, article_content)
 
 
         return 0
