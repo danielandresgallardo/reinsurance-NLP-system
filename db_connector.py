@@ -110,6 +110,66 @@ def add_translation(id, title, content):
     if connection:
       connection.close()
 
+def add_sentiment_analysis(id, label, score):
+  try:
+    connection = get_connection()
+    mycursor = connection.cursor(buffered=True)
+
+    if id is not None:
+      # Corrected the val tuple to include the article_id
+      sql = "INSERT INTO sentiment_analysis (article_id, label, score) VALUES (%s, %s, %s)"
+      val = (id, label, score)  # Use article_id[0] to get the ID value
+
+      mycursor.execute(sql, val)
+
+      connection.commit()
+
+      print(mycursor.rowcount, "sentiment analysis inserted.")
+    else:
+      print("No matching article found for analyzing.")
+
+  except mysql.connector.Error as e:
+    print(f"Error adding sentiment analysis: {str(e)}")
+    raise
+  finally:
+    if connection:
+      connection.close()
+
+def add_reinsurer(ranking, company_name, glnl, nlnl, gnlo, nnlo, shareholders_fund, loss_ratio, expense_ratio, combined_ratio):
+  try:
+    connection = get_connection()
+    mycursor = connection.cursor(buffered=True)
+    sql = "INSERT INTO reinsurer_info (ranking, name, glnl, nlnl, gnlo, nnlo, shareholders_funds, loss_ratios, expense_ratios, combined_ratios) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (ranking, company_name, glnl, nlnl, gnlo, nnlo, shareholders_fund, loss_ratio, expense_ratio, combined_ratio)
+
+    mycursor.execute(sql, val)
+
+    connection.commit()
+
+    print(mycursor.rowcount, "reinsurer inserted.")
+  except mysql.connector.Error as e:
+    print(f"Error adding reinsurer: {str(e)}")
+    raise
+  finally:
+    if connection:
+      connection.close()
+
+def get_reinsurer_list():
+  try:
+    connection = get_connection()
+    mycursor = connection.cursor(buffered=True)
+
+    sql = "SELECT id, name FROM reinsurance_NLP.reinsurer_info"
+    mycursor.execute(sql)
+
+    reinsurer_list = mycursor.fetchall()
+    return reinsurer_list
+  except mysql.connector.Error as e:
+    print(f"Error getting reinsurer list: {str(e)}")
+    raise
+  finally:
+    if connection:
+      connection.close()
 
 def delete_old_articles(oldest_date):
   try:
