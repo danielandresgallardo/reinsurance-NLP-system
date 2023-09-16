@@ -115,18 +115,15 @@ def add_sentiment_analysis(id, label, score):
     connection = get_connection()
     mycursor = connection.cursor(buffered=True)
 
-    if id is not None:
-      # Corrected the val tuple to include the article_id
-      sql = "INSERT INTO sentiment_analysis (article_id, label, score) VALUES (%s, %s, %s)"
-      val = (id, label, score)  # Use article_id[0] to get the ID value
+    # Corrected the val tuple to include the article_id
+    sql = "INSERT INTO sentiment_analysis (article_id, label, score) VALUES (%s, %s, %s)"
+    val = (id, label, score)  # Use article_id[0] to get the ID value
 
-      mycursor.execute(sql, val)
+    mycursor.execute(sql, val)
 
-      connection.commit()
+    connection.commit()
 
-      print(mycursor.rowcount, "sentiment analysis inserted.")
-    else:
-      print("No matching article found for analyzing.")
+    print(mycursor.rowcount, "sentiment analysis inserted.")
 
   except mysql.connector.Error as e:
     print(f"Error adding sentiment analysis: {str(e)}")

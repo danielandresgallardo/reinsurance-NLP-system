@@ -38,7 +38,10 @@ def retrieve_data_from_article(url_element, last_date):
 
         article_id = db_connector.get_id(url_element)
 
-        translate_article.translate_and_upload(article_id, article_title, article_content)
+        if article_id is not None:
+            translate_article.translate_and_upload(article_id, article_title, article_content)
+        else:
+            print("No matching article found for analyzing.")
 
 
         return 0
