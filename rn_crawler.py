@@ -1,8 +1,8 @@
 import fetch_and_parse_html
-import db_connector
+import DbUtilities
 from datetime import datetime
 import concurrent.futures
-import translate_article
+import TranslationUtilities
 
 
 def retrieve_data_from_article(url_element, last_date):
@@ -44,12 +44,12 @@ def retrieve_data_from_article(url_element, last_date):
         for article_content_element in article_content_elements:
             article_content += article_content_element.text
         
-        db_connector.add_article(article_title, article_author, "Reinsurance News", article_date, article_content, url_element)
+        DbUtilities.add_article(article_title, article_author, "Reinsurance News", article_date, article_content, url_element)
 
-        article_id = db_connector.get_id(url_element)
+        article_id = DbUtilities.get_id(url_element)
 
         if article_id is not None:
-            translate_article.translate_and_upload(article_id, article_title, article_content)
+            TranslationUtilities.translate_and_upload(article_id, article_title, article_content)
         else:
             print("No matching article found for analyzing.")
 
