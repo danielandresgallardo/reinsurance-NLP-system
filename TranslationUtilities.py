@@ -1,5 +1,5 @@
 from googletrans import Translator
-import db_connector
+import DbUtilities
 
 def translate_and_upload(id, title, content):
 
@@ -9,4 +9,4 @@ def translate_and_upload(id, title, content):
 
     translated_content = translator.translate(content, dest='zh-tw').text
 
-    db_connector.add_translation(id, translated_title, translated_content)
+    DbUtilities.add_translation(id, translated_title, translated_content)
