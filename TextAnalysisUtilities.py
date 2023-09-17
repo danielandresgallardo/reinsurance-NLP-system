@@ -7,7 +7,7 @@ from fuzzywuzzy import fuzz
 nlp = spacy.load('en_core_web_sm')
 nlp.add_pipe('spacytextblob')
 
-words =['reinsurance', 'insurance', 'group', 'limited', 'mutual', 'company', 'ltd', 'ltd.', 'inc', 'holdings', 'co', 'capital', 'international']
+words =['reinsurance', 'insurance', 'group', 'limited', 'mutual', 'company', 'ltd', 'ltd.', 'inc', 'holdings', 'co', 'capital', 'international', 'corporation', 'speciality']
 
 #Sentiment analysis(id, content)
 def sentiment_analysis(content):
@@ -68,9 +68,6 @@ def find_matches(article_id, entities, org_names, threshold):
             similarity_score = fuzz.ratio(entity.lower(), org_name.lower())
 
             if similarity_score >= threshold:
-                print("Similarity found: ")
-                print(entity)
-                print(org_name)
                 DbUtilities.link_reinsurer_to_article(article_id, reinsurer_id)
 
 def extract_keywords(title, article_content):
@@ -114,6 +111,9 @@ def select_top_categories(category_probabilities):
     # Find the maximum probability value
     max_probability = max(category_probabilities.values())
 
+    if max_probability == 0:
+        return 0
+
     # Filter categories with the maximum probability
     top_categories = [category for category, probability in category_probabilities.items() if probability == max_probability]
 
@@ -125,8 +125,9 @@ def set_categories(article_id, title, content):
     article_keywords = extract_keywords(title, content)
     category_probabilities = calculate_category_probability(article_keywords, category_keywords_list)
     top_categories = select_top_categories(category_probabilities)
-    for category_id in top_categories:
-        DbUtilities.link_category_to_article(article_id, category_id)
+    if top_categories != 0:
+        for category_id in top_categories:
+            DbUtilities.link_category_to_article(article_id, category_id)
 
 
 def Analyze_text(id, title, content):
@@ -141,11 +142,3 @@ def Analyze_text(id, title, content):
     find_matches(id, ner_list, org_list, 70)
 
     set_categories(id, title, content)
-
-
-#print(sentiment_analysis(content))
-#print(named_entity_recognition(content))
-#ner_list = named_entity_recognition(content)
-#org_list = DbUtilities.get_reinsurer_list()
-
-#find_matches(id, ner_list, org_list, 70)
