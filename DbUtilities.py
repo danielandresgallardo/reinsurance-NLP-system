@@ -10,7 +10,7 @@ mydb = {
 
 connection_pool = pooling.MySQLConnectionPool(
     pool_name="reinsurance_pool",
-    pool_size=10,  # Adjust the pool size as needed
+    pool_size=10,
     **mydb,
 )
 
@@ -90,18 +90,14 @@ def add_translation(id, title, content):
     connection = get_connection()
     mycursor = connection.cursor(buffered=True)
 
-    if id is not None:
-      # Corrected the val tuple to include the article_id
-      sql = "INSERT INTO translated_articles (article_id, title, content) VALUES (%s, %s, %s)"
-      val = (id[0], title, content)  # Use article_id[0] to get the ID value
+    sql = "INSERT INTO translated_articles (article_id, title, content) VALUES (%s, %s, %s)"
+    val = (id, title, content)
 
-      mycursor.execute(sql, val)
+    mycursor.execute(sql, val)
 
-      connection.commit()
+    connection.commit()
 
-      print(mycursor.rowcount, "translated article inserted.")
-    else:
-      print("No matching article found for translation.")
+    print(mycursor.rowcount, "translated article inserted.")
 
   except mysql.connector.Error as e:
     print(f"Error adding translation: {str(e)}")
@@ -110,14 +106,13 @@ def add_translation(id, title, content):
     if connection:
       connection.close()
 
-def add_sentiment_analysis(id, label, score):
+def add_sentiment_analysis(id, sentiment, subjectivity):
   try:
     connection = get_connection()
     mycursor = connection.cursor(buffered=True)
 
-    # Corrected the val tuple to include the article_id
-    sql = "INSERT INTO sentiment_analysis (article_id, label, score) VALUES (%s, %s, %s)"
-    val = (id, label, score)  # Use article_id[0] to get the ID value
+    sql = "INSERT INTO sentiment_analysis (article_id, sentiment_score, subjectivity_score) VALUES (%s, %s, %s)"
+    val = (id, sentiment, subjectivity)
 
     mycursor.execute(sql, val)
 
@@ -151,6 +146,32 @@ def add_reinsurer(ranking, company_name, glnl, nlnl, gnlo, nnlo, shareholders_fu
     if connection:
       connection.close()
 
+def link_reinsurer_to_article(article_id, reinsurer_id):
+    try:
+      connection = get_connection()
+      mycursor = connection.cursor(buffered=True)
+      # Check if the link already exists
+      check_sql = "SELECT * FROM reinsurer_news_article_relationship WHERE reinsurer_id = %s AND article_id = %s"
+      check_val = (reinsurer_id, article_id)
+      mycursor.execute(check_sql, check_val)
+
+      if mycursor.rowcount > 0:
+          print("Reinsurer-article link already exists.")
+      else:
+          # If the link doesn't exist, insert it
+          insert_sql = "INSERT INTO reinsurer_news_article_relationship (reinsurer_id, article_id) VALUES (%s, %s)"
+          insert_val = (reinsurer_id, article_id)
+          mycursor.execute(insert_sql, insert_val)
+          connection.commit()
+          print(mycursor.rowcount, "reinsurer linked to article.")
+
+    except mysql.connector.Error as e:
+      print(f"Error linking reinsurer to article: {str(e)}")
+      raise
+    finally:
+      if connection:
+        connection.close()
+
 def get_reinsurer_list():
   try:
     connection = get_connection()
@@ -163,6 +184,77 @@ def get_reinsurer_list():
     return reinsurer_list
   except mysql.connector.Error as e:
     print(f"Error getting reinsurer list: {str(e)}")
+    raise
+  finally:
+    if connection:
+      connection.close()
+
+def add_category(name, description, keywords):
+  try:
+    connection = get_connection()
+    mycursor = connection.cursor(buffered=True)
+    sql = "INSERT INTO categories_info (name, description, keywords) VALUES (%s, %s, %s)"
+    val = (name, description, keywords)
+
+    mycursor.execute(sql, val)
+
+    connection.commit()
+
+    print(mycursor.rowcount, "category inserted.")
+  except mysql.connector.Error as e:
+    print(f"Error adding category: {str(e)}")
+    raise
+  finally:
+    if connection:
+      connection.close()
+
+def link_category_to_article(article_id, category_id):
+    try:
+      connection = get_connection()
+      mycursor = connection.cursor(buffered=True)
+      # Check if the link already exists
+      check_sql = "SELECT * FROM article_categories WHERE category_id = %s AND article_id = %s"
+      check_val = (category_id, article_id)
+      mycursor.execute(check_sql, check_val)
+
+      if mycursor.rowcount > 0:
+          print("Reinsurer-article link already exists.")
+      else:
+          # If the link doesn't exist, insert it
+          insert_sql = "INSERT INTO article_categories (category_id, article_id) VALUES (%s, %s)"
+          insert_val = (category_id, article_id)
+          mycursor.execute(insert_sql, insert_val)
+          connection.commit()
+          print(mycursor.rowcount, "category linked to article.")
+
+    except mysql.connector.Error as e:
+      print(f"Error linking category to article: {str(e)}")
+      raise
+    finally:
+      if connection:
+        connection.close()
+
+def get_categories():
+
+  try:
+    connection = get_connection()
+    mycursor = connection.cursor(buffered=True)
+
+    sql = "SELECT id, name, keywords FROM categories_info"
+    mycursor.execute(sql)
+
+    category_list = []
+    
+    rows = mycursor.fetchall()
+    for row in rows:
+        category_id, category_name, keywords_str = row
+        keywords_list = keywords_str.split(',') if keywords_str else []
+        category_list.append((category_id, category_name, keywords_list))
+
+    return category_list
+
+  except mysql.connector.Error as e:
+    print(f"Error getting category list: {str(e)}")
     raise
   finally:
     if connection:
@@ -188,22 +280,18 @@ def delete_old_articles(oldest_date):
     if connection:
       connection.close()
 
-def delete_all_data():
+def delete_all_articles():
     try:
       connection = get_connection()
       mycursor = connection.cursor(buffered=True)
-      
-      tables_to_delete = ["translated_articles", "sentiment_analysis", "news_articles"]
 
-      for table in tables_to_delete:
-        delete_sql = f"DELETE FROM {table}"
-        mycursor.execute(delete_sql)
+      delete_sql = "DELETE FROM news_articles"
+      mycursor.execute(delete_sql)
       
-        connection.commit()
+      connection.commit()
 
-        print(mycursor.rowcount, "record(s) deleted")
     except mysql.connector.Error as e:
-        print(f"Error deleting all data: {str(e)}")
+        print(f"Error deleting all articles: {str(e)}")
         raise
     finally:
         if connection:
