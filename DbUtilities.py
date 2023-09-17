@@ -218,7 +218,7 @@ def link_category_to_article(article_id, category_id):
       mycursor.execute(check_sql, check_val)
 
       if mycursor.rowcount > 0:
-          print("Reinsurer-article link already exists.")
+          print("Category-article link already exists.")
       else:
           # If the link doesn't exist, insert it
           insert_sql = "INSERT INTO article_categories (category_id, article_id) VALUES (%s, %s)"
