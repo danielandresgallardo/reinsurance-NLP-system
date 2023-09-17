@@ -3,6 +3,7 @@ import DbUtilities
 from datetime import datetime
 import concurrent.futures
 import TranslationUtilities
+import TextAnalysisUtilities
 
 
 def retrieve_data_from_article(url_element, last_date):
@@ -39,9 +40,10 @@ def retrieve_data_from_article(url_element, last_date):
         article_id = DbUtilities.get_id(url_element)
 
         if article_id is not None:
-            TranslationUtilities.translate_and_upload(article_id, article_title, article_content)
+            TranslationUtilities.translate_and_upload(article_id[0], article_title, article_content)
+            TextAnalysisUtilities.Analyze_text(article_id[0], article_title, article_content)
         else:
-            print("No matching article found for analyzing.")
+            print("No matching article found for translating and analyzing.")
 
 
         return 0
@@ -51,7 +53,11 @@ def retrieve_data_from_article(url_element, last_date):
 
 def update_news(last_date):
     
-    URL = 'https://www.globalreinsurance.com/news/5792.more?navcode=1817'
+    URL = 'https://www.globalreinsurance.com/sections/news'
+    
+    soup = fetch_and_parse_html.run(URL)
+
+    URL = soup.find("p", class_="more").find("a")['href']
 
     up_to_date = False
 

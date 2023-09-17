@@ -3,7 +3,7 @@ import DbUtilities
 from datetime import datetime
 import concurrent.futures
 import TranslationUtilities
-
+import TextAnalysisUtilities
 
 def retrieve_data_from_article(url_element, last_date):
     try:
@@ -49,9 +49,11 @@ def retrieve_data_from_article(url_element, last_date):
         article_id = DbUtilities.get_id(url_element)
 
         if article_id is not None:
-            TranslationUtilities.translate_and_upload(article_id, article_title, article_content)
+            TranslationUtilities.translate_and_upload(article_id[0], article_title, article_content)
+            TextAnalysisUtilities.Analyze_text(article_id[0], article_title, article_content)
         else:
-            print("No matching article found for analyzing.")
+            print("No matching article found for translating and analyzing.")
+
 
         return 0
     except Exception as e:
