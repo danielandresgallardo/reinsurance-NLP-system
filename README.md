@@ -59,13 +59,20 @@ Search menu:
 Dropdown list of reinsurers in the search menu:
 ![Screenshot04](images/Screenshot04.png)
 
-Link to demo: [Demo](http://danielgallardo.pythonanywhere.com/)
+Link to demo: [Demo](http://danielgallardo.pythonanywhere.com/news/)
 
 ## Requirements
 
-python3.11
-flask
-libraries
+- Python3.10
+Python libraries:
+- Flask
+- mysql-connector-python
+- Flask-Bootstrap
+- Waitress
+- spacy
+- spacytextblob
+- fuzzywuzzy
+- googletrans
 
 ## Usage
 
