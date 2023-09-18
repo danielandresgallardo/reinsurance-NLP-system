@@ -8,8 +8,6 @@ NPL analysis system for international reinsurance news at Cathay Property Insura
 - [Screenshots](#screenshots)
 - [Demo](#demo)
 - [Requirements](#requirements)
-- [Usage](#usage)
-- [Future improvements](#future-improvements)
 
 ## Project Description
 
@@ -79,7 +77,3 @@ Link to demo: [Demo](http://danielgallardo.pythonanywhere.com/news)
 - spacytextblob
 - fuzzywuzzy
 - googletrans
-
-## Usage
-
-## Future Improvements
