@@ -35,7 +35,7 @@ def retrieve_data_from_article(url_element, last_date):
         for article_content_element in article_content_elements:
             article_content += article_content_element.text
         
-        DbUtilities.add_article(article_title, 0, "Glabal Reinsurance", article_date, article_content, url_element)
+        DbUtilities.add_article(article_title, 0, "Global Reinsurance", article_date, article_content, url_element)
 
         article_id = DbUtilities.get_id(url_element)
 
