@@ -74,6 +74,7 @@ Link to demo: [Demo](http://danielgallardo.pythonanywhere.com/news)
 - mysql-connector-python
 - Flask-Bootstrap
 - Waitress
+- beautifulsoup
 - spacy
 - spacytextblob
 - fuzzywuzzy
