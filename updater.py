@@ -23,8 +23,6 @@ else:
     #Set last date to 1 year ago, for testing purposes just set it to 1 month ago
     #last_date = now - relativedelta(years=1)
     last_date = now - relativedelta(months=1)
-    #date_temp = "2023-09-10T15:43:00+0800"
-    #last_date = datetime.strptime(date_temp, '%Y-%m-%dT%H:%M:%S%z')
 print(last_date)
 
 gr_crawler.update_news(last_date)
