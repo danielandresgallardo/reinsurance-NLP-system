@@ -5,7 +5,7 @@ mydb = {
   "host": "localhost",
   "user": "root",
   "password": "rootroot",
-  "database": "reinsurance_NLP",
+  "database": "reinsurance_nlp_db",
 }
 
 connection_pool = pooling.MySQLConnectionPool(
@@ -177,7 +177,7 @@ def get_reinsurer_list():
     connection = get_connection()
     mycursor = connection.cursor(buffered=True)
 
-    sql = "SELECT id, name FROM reinsurance_NLP.reinsurer_info"
+    sql = "SELECT id, name FROM reinsurer_info"
     mycursor.execute(sql)
 
     reinsurer_list = mycursor.fetchall()
