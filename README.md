@@ -5,11 +5,15 @@ NPL analysis system for international reinsurance news at Cathay Property Insura
 ## Table of Contents
 
 - [Project Description](#project-description)
+- [Screenshots](#screenshots)
+- [Demo](#demo)
 - [Requirements](#requirements)
 - [Usage](#usage)
 - [Future improvements](#future-improvements)
 
 ## Project Description
+
+Demo: [Demo](#demo)
 
 Python application built using the Flask web framework. It functions as a reinsurance news data scraper and inquiry tool, incorporating natural language processing (NLP) to extract sentiment and subjectivity scores from news articles. The application also allows users to sort news articles by categories, reinsurer, and news source.
 
@@ -45,7 +49,7 @@ Python application built using the Flask web framework. It functions as a reinsu
 7. **Bootstrap Integration**:
    - Integrates the Flask-Bootstrap extension to enhance the visual appearance and styling of web pages.
 
-### Screenshots/Demo
+## Screenshots
 
 Article list:
 ![Screenshot01](images/Screenshot01.png)
@@ -58,6 +62,8 @@ Search menu:
 
 Dropdown list of reinsurers in the search menu:
 ![Screenshot04](images/Screenshot04.png)
+
+## Demo 
 
 Link to demo: [Demo](http://danielgallardo.pythonanywhere.com/news/)
 
