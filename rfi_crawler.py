@@ -41,7 +41,6 @@ def retrieve_data_from_article(url_element, last_date):
         DbUtilities.add_article(article_title, article_author, "rfi", article_date, article_content, url_element)
 
         article_id = DbUtilities.get_id(url_element)
-        print(len(url_element))
 
         if article_id is not None:
             translated_title, translated_content = TranslationUtilities.translate_to_english(article_title, article_content)
@@ -66,7 +65,6 @@ def update_news(last_date):
 
     while not up_to_date:
         try:
-            print("NEXT PAGEEEEEEEEEEEEEEEEEEEEE")
             soup = fetch_and_parse_html.run(URL)
 
             page_num += 1
