@@ -65,7 +65,7 @@ Dropdown list of reinsurers in the search menu:
 
 ## Demo 
 
-Link to demo: [Demo](http://danielgallardo.pythonanywhere.com/news/)
+Link to demo: [Demo](http://danielgallardo.pythonanywhere.com/news)
 
 ## Requirements
 
