@@ -64,7 +64,6 @@ Link to demo: [Demo](http://danielgallardo.pythonanywhere.com/news/)
 ## Requirements
 
 - Python3.10
-Python libraries:
 - Flask
 - mysql-connector-python
 - Flask-Bootstrap
