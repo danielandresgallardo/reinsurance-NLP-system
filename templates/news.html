@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <h1>再保險新聞</h1>
+    {% if selected_category %}
+        <p>類別: {{ selected_category }}</p>
+    {% endif %}
+    <ul class="list-group">
+        {% for article in articles %}
+            <li class="list-group-item">
+                <a href="/article/{{ article[0] }}">{{ article[1] }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

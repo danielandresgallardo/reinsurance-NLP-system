@@ -1,0 +1,35 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <h1></h查詢1>
+    <form method="POST" action="/search">
+        <div class="form-group">
+            <label for="category">類別</label>
+            <select class="form-control" id="category" name="category">
+                <option value="">所有類別</option>
+                {% for category in categories %}
+                    <option value="{{ category[0] }}">{{ category[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="reinsurer">再保險公司</label>
+            <select class="form-control" id="reinsurer" name="reinsurer">
+                <option value="">所有再保險公司</option>
+                {% for reinsurer in reinsurers %}
+                    <option value="{{ reinsurer[0] }}">{{ reinsurer[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="source">來源</label>
+            <select class="form-control" id="source" name="source">
+                <option value="">所有來源</option>
+                <option value="Global Reinsurance">Global Reinsurance</option>
+                <option value="Reinsurance News">Reinsurance News</option>
+                <option value="rfi">rfi</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">查詢</button>
+    </form>
+{% endblock %}

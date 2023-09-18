@@ -1,0 +1,62 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+            <h1>{{ article[1] }}</h1>
+            <p>來源： {{ article[3] }}</p>
+            <p>作者： {{ article[2] }}</p>
+            <p>日期： {{ article[4] }}</p>
+            <p>{{ article[5] }}</p>
+            <p><a href="{{ article[6] }}" target="_blank">前往文章網站</a></p>
+        </div>
+        <div class="col-md-4">
+            <ul>
+                {% for reinsurer in reinsurer_data %}
+                <h3>再保險公司資料</h3>
+                    <li>
+                        <strong>名稱：</strong> {{ reinsurer[2] }}<br>
+                    </li>
+                    <li>
+                        <strong>全球排名：</strong> {{ reinsurer[1] }}<br>
+                    </li>
+                    <li>
+                        <strong>總人壽和非人壽保費收入:</strong>USD${{ reinsurer[3] }}(百萬)<br>
+                    </li>
+                    <li>
+                        <strong>淨人壽和非人壽保費收入:</strong>USD${{ reinsurer[4] }}(百萬)<br>
+                    </li>
+                    <li>
+                        <strong>僅限非人壽保費收入:</strong>USD${{ reinsurer[5] }}(百萬)<br>
+                    </li>
+                    <li>
+                        <strong>淨非人壽保費收入:</strong>USD${{ reinsurer[6] }}(百萬)<br>
+                    </li>
+                    <li>
+                        <strong>股東資金:</strong>USD${{ reinsurer[7] }}(百萬)<br>
+                    </li>
+                    <li>
+                        <strong>賠付率:</strong> {{ reinsurer[8] }}%<br>
+                    </li>
+                    <li>
+                        <strong>費用率:</strong> {{ reinsurer[9] }}%<br>
+                    </li>
+                    <li>
+                        <strong>綜合比率:</strong> {{ reinsurer[10] }}%<br>
+                    </li>
+                    基於評級機構 A.M. Best 的研究數據(2022)
+                {% endfor %}
+            </ul>
+            <ul>
+                <h3>情緒分析</h3>
+                    <li>
+                        <strong>情緒分數：</strong> {{ sentiment_data[0] }}% ({{ sentiment_data[1] }})<br>
+                    </li>
+                    <li>
+                        <strong>主觀性分數：</strong> {{ sentiment_data[2] }}%<br>
+                    </li>
+            </ul>
+        </div>
+    </div>
+    <a href="/news">返回</a>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+
+{% block content %}
+    <h1>查詢結果</h1>
+    <ul class="list-group">
+        {% for result in results %}
+            <li class="list-group-item">
+                <a href="/article/{{ result[0] }}">{{ result[1] }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="/search">返回</a>
+{% endblock %}
