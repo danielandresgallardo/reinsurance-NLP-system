@@ -65,7 +65,7 @@ Dropdown list of reinsurers in the search menu:
 
 ## Demo 
 
-Link to demo: <a href="URL" target="_blank">Demo</a>
+Link to demo: [Demo](http://danielgallardo.pythonanywhere.com/news){:target="_blank"}
 
 ## Requirements
 
